@@ -70,7 +70,7 @@ static RegisterPass<FindTracePass> X("ft", "Getting trace");
 void FindTracePass::Instrument(Module* M)
 {
   LLVMContext &Ctx = M->getContext();
-  Constant* prFunc = M->getOrInsertFunction("_Z3Etav", Type::getVoidTy(Ctx), NULL);
+  Constant* prFunc = M->getOrInsertFunction("_Z3EtaPc", Type::getVoidTy(Ctx), Type::getInt8PtrTy(Ctx), NULL);
 
   //Function to find threads in the code that are being spwned and joined
   for (Module::iterator F = M->begin(), e1 = M->end(); F!=e1; ++F)
@@ -108,8 +108,10 @@ void FindTracePass::Instrument(Module* M)
                 Instruction* lock_inst = &*I;
                 IRBuilder<> cLock_builder(lock_inst);
                 cLock_builder.SetInsertPoint(&*B, I);
-                cLock_builder.CreateCall(prFunc);
-                //cLock_builder.CreateCall(printfFunc, values);
+
+                Value *formatStr = cLock_builder.CreateGlobalStringPtr(callInst->getOperand(0)->getName());
+                Value* args[] = {formatStr};
+                cLock_builder.CreateCall(prFunc,args);
 
                 mutexLocks.push_back(callInst->getOperand(0)->getName());
               }
@@ -119,8 +121,10 @@ void FindTracePass::Instrument(Module* M)
                 Instruction* lock_inst = &*I;
                 IRBuilder<> cUnlock_builder(lock_inst);
                 cUnlock_builder.SetInsertPoint(&*B, I);
-                cUnlock_builder.CreateCall(prFunc);
-                //cUnlock_builder.CreateCall(printfFunc, values);
+
+                Value *formatStr = cUnlock_builder.CreateGlobalStringPtr(callInst->getOperand(0)->getName());
+                Value* args[] = {formatStr};
+                cUnlock_builder.CreateCall(prFunc, args);
 
                 mutexUnlocks.push_back(callInst->getOperand(0)->getName());
               }
@@ -152,8 +156,10 @@ void FindTracePass::Instrument(Module* M)
                 Instruction* lock_inst = &*I;
                 IRBuilder<> iLock_builder(lock_inst);
                 iLock_builder.SetInsertPoint(&*B, I);
-                iLock_builder.CreateCall(prFunc);
-                //iLock_builder.CreateCall(printfFunc, values);
+                
+                Value *formatStr = iLock_builder.CreateGlobalStringPtr(invokeInst->getOperand(0)->getName());
+                Value* args[] = {formatStr};
+                iLock_builder.CreateCall(prFunc, args);
 
                 mutexLocks.push_back(invokeInst->getOperand(0)->getName());
               }
@@ -163,8 +169,10 @@ void FindTracePass::Instrument(Module* M)
                 Instruction* lock_inst = &*I;
                 IRBuilder<> iUnlock_builder(lock_inst);
                 iUnlock_builder.SetInsertPoint(&*B, I);
-                iUnlock_builder.CreateCall(prFunc);
-                //iUnlock_builder.CreateCall(printfFunc, values);
+
+                Value *formatStr = iUnlock_builder.CreateGlobalStringPtr(invokeInst->getOperand(0)->getName());
+                Value* args[] = {formatStr};
+                iUnlock_builder.CreateCall(prFunc, args);
 
                 mutexUnlocks.push_back(invokeInst->getOperand(0)->getName());
               }

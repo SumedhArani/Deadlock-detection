@@ -8,15 +8,15 @@ target triple = "x86_64-apple-macosx10.11.0"
 %"class.std::__1::ios_base" = type { i32 (...)**, i32, i64, i64, i32, i32, i8*, i8*, void (i32, %"class.std::__1::ios_base"*, i32)**, i32*, i64, i64, i64*, i64, i64, i8**, i64, i64 }
 %"class.std::__1::locale::id" = type <{ %"struct.std::__1::once_flag", i32, [4 x i8] }>
 %"struct.std::__1::once_flag" = type { i64 }
-%struct._opaque_pthread_t = type { i64, %struct.__darwin_pthread_handler_rec*, [8176 x i8] }
-%struct.__darwin_pthread_handler_rec = type { void (i8*)*, i8*, %struct.__darwin_pthread_handler_rec* }
 %"class.std::__1::locale" = type { %"class.std::__1::locale::__imp"* }
 %"class.std::__1::locale::__imp" = type opaque
-%"class.std::__1::basic_ostream<char, std::__1::char_traits<char> >::sentry" = type { i8, %"class.std::__1::basic_ostream"* }
-%"class.std::__1::basic_streambuf" = type { i32 (...)**, %"class.std::__1::locale", i8*, i8*, i8*, i8*, i8*, i8* }
+%struct._opaque_pthread_t = type { i64, %struct.__darwin_pthread_handler_rec*, [8176 x i8] }
+%struct.__darwin_pthread_handler_rec = type { void (i8*)*, i8*, %struct.__darwin_pthread_handler_rec* }
 %"class.std::__1::locale::facet" = type { %"class.std::__1::__shared_count" }
 %"class.std::__1::__shared_count" = type { i32 (...)**, i64 }
 %"class.std::__1::ctype" = type <{ %"class.std::__1::locale::facet", i32*, i8, [7 x i8] }>
+%"class.std::__1::basic_ostream<char, std::__1::char_traits<char> >::sentry" = type { i8, %"class.std::__1::basic_ostream"* }
+%"class.std::__1::basic_streambuf" = type { i32 (...)**, %"class.std::__1::locale", i8*, i8*, i8*, i8*, i8*, i8* }
 %"class.std::__1::basic_string" = type { %"class.std::__1::__compressed_pair" }
 %"class.std::__1::__compressed_pair" = type { %"class.std::__1::__libcpp_compressed_pair_imp" }
 %"class.std::__1::__libcpp_compressed_pair_imp" = type { %"struct.std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::__rep" }
@@ -28,18 +28,20 @@ target triple = "x86_64-apple-macosx10.11.0"
 
 @ei = global i32 0, align 4
 @_ZNSt3__14coutE = external global %"class.std::__1::basic_ostream", align 8
-@.str = private unnamed_addr constant [9 x i8] c" t_id : \00", align 1
-@.str.1 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
+@.str = private unnamed_addr constant [17 x i8] c" t_id : l_id -> \00", align 1
+@.str.1 = private unnamed_addr constant [4 x i8] c" : \00", align 1
 @_ZNSt3__15ctypeIcE2idE = external global %"class.std::__1::locale::id", align 8
 
 ; Function Attrs: ssp uwtable
-define void @_Z3Etav() #0 personality i32 (...)* @__gxx_personality_v0 {
+define void @_Z3EtaPc(i8* nocapture readonly %s) #0 personality i32 (...)* @__gxx_personality_v0 {
 entry:
+  %ref.tmp.i = alloca %"class.std::__1::locale", align 8
+  %__c.addr.i = alloca i8, align 1
   %0 = load i32, i32* @ei, align 4, !tbaa !2
   %inc = add nsw i32 %0, 1
   store i32 %inc, i32* @ei, align 4, !tbaa !2
   %call = tail call dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEElsEi(%"class.std::__1::basic_ostream"* nonnull @_ZNSt3__14coutE, i32 %inc)
-  %call1.i = tail call dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__124__put_character_sequenceIcNS_11char_traitsIcEEEERNS_13basic_ostreamIT_T0_EES7_PKS4_m(%"class.std::__1::basic_ostream"* nonnull dereferenceable(160) %call, i8* getelementptr inbounds ([9 x i8], [9 x i8]* @.str, i64 0, i64 0), i64 8)
+  %call1.i = tail call dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__124__put_character_sequenceIcNS_11char_traitsIcEEEERNS_13basic_ostreamIT_T0_EES7_PKS4_m(%"class.std::__1::basic_ostream"* nonnull dereferenceable(160) %call, i8* getelementptr inbounds ([17 x i8], [17 x i8]* @.str, i64 0, i64 0), i64 16)
   %call.i2.i = invoke %struct._opaque_pthread_t* @pthread_self()
           to label %_ZNSt3__111this_thread6get_idEv.exit unwind label %terminate.lpad.i
 
@@ -53,7 +55,47 @@ terminate.lpad.i:                                 ; preds = %entry
 _ZNSt3__111this_thread6get_idEv.exit:             ; preds = %entry
   %3 = bitcast %struct._opaque_pthread_t* %call.i2.i to i8*
   %call.i = tail call dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEElsEPKv(%"class.std::__1::basic_ostream"* nonnull %call1.i, i8* %3)
-  %call1.i7 = tail call dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__124__put_character_sequenceIcNS_11char_traitsIcEEEERNS_13basic_ostreamIT_T0_EES7_PKS4_m(%"class.std::__1::basic_ostream"* nonnull dereferenceable(160) %call.i, i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.1, i64 0, i64 0), i64 1)
+  %call1.i9 = tail call dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__124__put_character_sequenceIcNS_11char_traitsIcEEEERNS_13basic_ostreamIT_T0_EES7_PKS4_m(%"class.std::__1::basic_ostream"* nonnull dereferenceable(160) %call.i, i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.1, i64 0, i64 0), i64 3)
+  %add.ptr = getelementptr inbounds i8, i8* %s, i64 2
+  %4 = load i8, i8* %add.ptr, align 1, !tbaa !6
+  call void @llvm.lifetime.start(i64 1, i8* nonnull %__c.addr.i)
+  store i8 %4, i8* %__c.addr.i, align 1, !tbaa !6
+  %call.i10 = call dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__124__put_character_sequenceIcNS_11char_traitsIcEEEERNS_13basic_ostreamIT_T0_EES7_PKS4_m(%"class.std::__1::basic_ostream"* nonnull dereferenceable(160) %call1.i9, i8* nonnull %__c.addr.i, i64 1)
+  call void @llvm.lifetime.end(i64 1, i8* nonnull %__c.addr.i)
+  %5 = bitcast %"class.std::__1::basic_ostream"* %call.i10 to i8**
+  %vtable.i = load i8*, i8** %5, align 8, !tbaa !7
+  %vbase.offset.ptr.i = getelementptr i8, i8* %vtable.i, i64 -24
+  %6 = bitcast i8* %vbase.offset.ptr.i to i64*
+  %vbase.offset.i = load i64, i64* %6, align 8
+  %7 = bitcast %"class.std::__1::basic_ostream"* %call.i10 to i8*
+  %add.ptr.i = getelementptr inbounds i8, i8* %7, i64 %vbase.offset.i
+  %8 = bitcast %"class.std::__1::locale"* %ref.tmp.i to i8*
+  call void @llvm.lifetime.start(i64 8, i8* %8)
+  %9 = bitcast i8* %add.ptr.i to %"class.std::__1::ios_base"*
+  call void @_ZNKSt3__18ios_base6getlocEv(%"class.std::__1::locale"* nonnull sret %ref.tmp.i, %"class.std::__1::ios_base"* %9)
+  %call.i5.i = invoke %"class.std::__1::locale::facet"* @_ZNKSt3__16locale9use_facetERNS0_2idE(%"class.std::__1::locale"* nonnull %ref.tmp.i, %"class.std::__1::locale::id"* nonnull dereferenceable(16) @_ZNSt3__15ctypeIcE2idE)
+          to label %invoke.cont.i unwind label %lpad.i
+
+invoke.cont.i:                                    ; preds = %_ZNSt3__111this_thread6get_idEv.exit
+  %10 = bitcast %"class.std::__1::locale::facet"* %call.i5.i to %"class.std::__1::ctype"*
+  %11 = bitcast %"class.std::__1::locale::facet"* %call.i5.i to i8 (%"class.std::__1::ctype"*, i8)***
+  %vtable.i.i = load i8 (%"class.std::__1::ctype"*, i8)**, i8 (%"class.std::__1::ctype"*, i8)*** %11, align 8, !tbaa !7
+  %vfn.i.i = getelementptr inbounds i8 (%"class.std::__1::ctype"*, i8)*, i8 (%"class.std::__1::ctype"*, i8)** %vtable.i.i, i64 7
+  %12 = load i8 (%"class.std::__1::ctype"*, i8)*, i8 (%"class.std::__1::ctype"*, i8)** %vfn.i.i, align 8
+  %call.i6.i = invoke signext i8 %12(%"class.std::__1::ctype"* %10, i8 signext 10)
+          to label %_ZNKSt3__19basic_iosIcNS_11char_traitsIcEEE5widenEc.exit unwind label %lpad.i
+
+lpad.i:                                           ; preds = %invoke.cont.i, %_ZNSt3__111this_thread6get_idEv.exit
+  %13 = landingpad { i8*, i32 }
+          cleanup
+  call void @_ZNSt3__16localeD1Ev(%"class.std::__1::locale"* nonnull %ref.tmp.i) #6
+  resume { i8*, i32 } %13
+
+_ZNKSt3__19basic_iosIcNS_11char_traitsIcEEE5widenEc.exit: ; preds = %invoke.cont.i
+  call void @_ZNSt3__16localeD1Ev(%"class.std::__1::locale"* nonnull %ref.tmp.i) #6
+  call void @llvm.lifetime.end(i64 8, i8* %8)
+  %call1.i13 = call dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEE3putEc(%"class.std::__1::basic_ostream"* nonnull %call.i10, i8 signext %call.i6.i)
+  %call2.i = call dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEE5flushEv(%"class.std::__1::basic_ostream"* nonnull %call.i10)
   ret void
 }
 
@@ -85,13 +127,13 @@ entry:
           to label %invoke.cont unwind label %lpad
 
 invoke.cont:                                      ; preds = %entry
-  %1 = load i8, i8* %0, align 8, !tbaa !6, !range !9
+  %1 = load i8, i8* %0, align 8, !tbaa !9, !range !12
   %tobool.i = icmp eq i8 %1, 0
   br i1 %tobool.i, label %if.end27, label %if.then
 
 if.then:                                          ; preds = %invoke.cont
   %2 = bitcast %"class.std::__1::basic_ostream"* %__os to i8**
-  %vtable.i.i = load i8*, i8** %2, align 8, !tbaa !10
+  %vtable.i.i = load i8*, i8** %2, align 8, !tbaa !7
   %vbase.offset.ptr.i.i = getelementptr i8, i8* %vtable.i.i, i64 -24
   %3 = bitcast i8* %vbase.offset.ptr.i.i to i64*
   %vbase.offset.i.i = load i64, i64* %3, align 8
@@ -99,15 +141,15 @@ if.then:                                          ; preds = %invoke.cont
   %add.ptr.i.i = getelementptr inbounds i8, i8* %4, i64 %vbase.offset.i.i
   %__rdbuf_.i.i.i.i = getelementptr inbounds i8, i8* %add.ptr.i.i, i64 40
   %5 = bitcast i8* %__rdbuf_.i.i.i.i to %"class.std::__1::basic_streambuf"**
-  %6 = load %"class.std::__1::basic_streambuf"*, %"class.std::__1::basic_streambuf"** %5, align 8, !tbaa !12
+  %6 = load %"class.std::__1::basic_streambuf"*, %"class.std::__1::basic_streambuf"** %5, align 8, !tbaa !13
   %7 = bitcast i8* %add.ptr.i.i to %"class.std::__1::ios_base"*
   %__fmtflags_.i = getelementptr inbounds i8, i8* %add.ptr.i.i, i64 8
   %8 = bitcast i8* %__fmtflags_.i to i32*
-  %9 = load i32, i32* %8, align 8, !tbaa !16
+  %9 = load i32, i32* %8, align 8, !tbaa !17
   %add.ptr5 = getelementptr inbounds i8, i8* %__str, i64 %__len
   %__fill_.i = getelementptr inbounds i8, i8* %add.ptr.i.i, i64 144
   %10 = bitcast i8* %__fill_.i to i32*
-  %11 = load i32, i32* %10, align 8, !tbaa !17
+  %11 = load i32, i32* %10, align 8, !tbaa !18
   %cmp.i.i = icmp eq i32 %11, -1
   br i1 %cmp.i.i, label %if.then.i, label %invoke.cont15
 
@@ -124,7 +166,7 @@ if.then.i:                                        ; preds = %if.then
 invoke.cont.i.i:                                  ; preds = %.noexc
   %13 = bitcast %"class.std::__1::locale::facet"* %call.i5.i.i to %"class.std::__1::ctype"*
   %14 = bitcast %"class.std::__1::locale::facet"* %call.i5.i.i to i8 (%"class.std::__1::ctype"*, i8)***
-  %vtable.i.i.i = load i8 (%"class.std::__1::ctype"*, i8)**, i8 (%"class.std::__1::ctype"*, i8)*** %14, align 8, !tbaa !10
+  %vtable.i.i.i = load i8 (%"class.std::__1::ctype"*, i8)**, i8 (%"class.std::__1::ctype"*, i8)*** %14, align 8, !tbaa !7
   %vfn.i.i.i = getelementptr inbounds i8 (%"class.std::__1::ctype"*, i8)*, i8 (%"class.std::__1::ctype"*, i8)** %vtable.i.i.i, i64 7
   %15 = load i8 (%"class.std::__1::ctype"*, i8)*, i8 (%"class.std::__1::ctype"*, i8)** %vfn.i.i.i, align 8
   %call.i6.i.i = invoke signext i8 %15(%"class.std::__1::ctype"* %13, i8 signext 32)
@@ -140,7 +182,7 @@ _ZNKSt3__19basic_iosIcNS_11char_traitsIcEEE5widenEc.exit.i: ; preds = %invoke.co
   call void @_ZNSt3__16localeD1Ev(%"class.std::__1::locale"* nonnull %ref.tmp.i.i) #6
   call void @llvm.lifetime.end(i64 8, i8* %12)
   %conv.i = sext i8 %call.i6.i.i to i32
-  store i32 %conv.i, i32* %10, align 8, !tbaa !17
+  store i32 %conv.i, i32* %10, align 8, !tbaa !18
   br label %invoke.cont15
 
 invoke.cont15:                                    ; preds = %_ZNKSt3__19basic_iosIcNS_11char_traitsIcEEE5widenEc.exit.i, %if.then
@@ -157,7 +199,7 @@ invoke.cont17:                                    ; preds = %invoke.cont15
   br i1 %cmp.i, label %if.then21, label %if.end27
 
 if.then21:                                        ; preds = %invoke.cont17
-  %vtable22 = load i8*, i8** %2, align 8, !tbaa !10
+  %vtable22 = load i8*, i8** %2, align 8, !tbaa !7
   %vbase.offset.ptr23 = getelementptr i8, i8* %vtable22, i64 -24
   %18 = bitcast i8* %vbase.offset.ptr23 to i64*
   %vbase.offset24 = load i64, i64* %18, align 8
@@ -165,7 +207,7 @@ if.then21:                                        ; preds = %invoke.cont17
   %19 = bitcast i8* %add.ptr25 to %"class.std::__1::ios_base"*
   %__rdstate_.i.i = getelementptr inbounds i8, i8* %add.ptr25, i64 32
   %20 = bitcast i8* %__rdstate_.i.i to i32*
-  %21 = load i32, i32* %20, align 8, !tbaa !19
+  %21 = load i32, i32* %20, align 8, !tbaa !20
   %or.i.i = or i32 %21, 5
   invoke void @_ZNSt3__18ios_base5clearEj(%"class.std::__1::ios_base"* %19, i32 %or.i.i)
           to label %if.end27 unwind label %lpad1
@@ -195,7 +237,7 @@ catch:                                            ; preds = %lpad1.body, %lpad
   %.pre-phi = phi i8** [ %2, %lpad1.body ], [ %.pre, %lpad ]
   %exn.slot.0 = phi i8* [ %25, %lpad1.body ], [ %23, %lpad ]
   %26 = call i8* @__cxa_begin_catch(i8* %exn.slot.0) #6
-  %vtable28 = load i8*, i8** %.pre-phi, align 8, !tbaa !10
+  %vtable28 = load i8*, i8** %.pre-phi, align 8, !tbaa !7
   %vbase.offset.ptr29 = getelementptr i8, i8* %vtable28, i64 -24
   %27 = bitcast i8* %vbase.offset.ptr29 to i64*
   %vbase.offset30 = load i64, i64* %27, align 8
@@ -250,7 +292,7 @@ if.end:                                           ; preds = %entry
   %sub.ptr.rhs.cast = ptrtoint i8* %__ob to i64
   %sub.ptr.sub = sub i64 %sub.ptr.lhs.cast, %sub.ptr.rhs.cast
   %__width_.i = getelementptr inbounds %"class.std::__1::ios_base", %"class.std::__1::ios_base"* %__iob, i64 0, i32 3
-  %0 = load i64, i64* %__width_.i, align 8, !tbaa !20
+  %0 = load i64, i64* %__width_.i, align 8, !tbaa !21
   %cmp1 = icmp sgt i64 %0, %sub.ptr.sub
   %sub = sub nsw i64 %0, %sub.ptr.sub
   %__ns.0 = select i1 %cmp1, i64 %sub, i64 0
@@ -261,7 +303,7 @@ if.end:                                           ; preds = %entry
 
 if.then8:                                         ; preds = %if.end
   %1 = bitcast %"class.std::__1::basic_streambuf"* %__s.coerce to i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)***
-  %vtable.i80 = load i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)**, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*** %1, align 8, !tbaa !10
+  %vtable.i80 = load i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)**, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*** %1, align 8, !tbaa !7
   %vfn.i81 = getelementptr inbounds i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)** %vtable.i80, i64 12
   %2 = load i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)** %vfn.i81, align 8
   %call.i82 = tail call i64 %2(%"class.std::__1::basic_streambuf"* nonnull %__s.coerce, i8* %__ob, i64 %sub.ptr.sub6)
@@ -277,7 +319,7 @@ if.then17:                                        ; preds = %if.end15
   call void @llvm.lifetime.start(i64 24, i8* %3) #6
   call void @llvm.memset.p0i8.i64(i8* %3, i8 0, i64 24, i32 8, i1 false) #6
   call void @_ZNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE6__initEmc(%"class.std::__1::basic_string"* nonnull %__sp, i64 %__ns.0, i8 signext %__fl)
-  %4 = load i8, i8* %3, align 8, !tbaa !21
+  %4 = load i8, i8* %3, align 8, !tbaa !6
   %and.i.i.i = and i8 %4, 1
   %tobool.i.i.i = icmp eq i8 %and.i.i.i, 0
   %__data_.i.i.i = getelementptr inbounds %"class.std::__1::basic_string", %"class.std::__1::basic_string"* %__sp, i64 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 2
@@ -286,7 +328,7 @@ if.then17:                                        ; preds = %if.end15
   %arrayidx.i.i.i = getelementptr inbounds %"struct.std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::__short", %"struct.std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::__short"* %__s.i.i.i, i64 0, i32 1, i64 0
   %cond.i.i = select i1 %tobool.i.i.i, i8* %arrayidx.i.i.i, i8* %5
   %6 = bitcast %"class.std::__1::basic_streambuf"* %__s.coerce to i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)***
-  %vtable.i83 = load i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)**, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*** %6, align 8, !tbaa !10
+  %vtable.i83 = load i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)**, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*** %6, align 8, !tbaa !7
   %vfn.i84 = getelementptr inbounds i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)** %vtable.i83, i64 12
   %7 = load i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)** %vfn.i84, align 8
   %call.i8586 = invoke i64 %7(%"class.std::__1::basic_streambuf"* nonnull %__s.coerce, i8* %cond.i.i, i64 %__ns.0)
@@ -312,7 +354,7 @@ if.end26:                                         ; preds = %invoke.cont, %if.en
 
 if.then31:                                        ; preds = %if.end26
   %9 = bitcast %"class.std::__1::basic_streambuf"* %__s.coerce to i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)***
-  %vtable.i = load i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)**, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*** %9, align 8, !tbaa !10
+  %vtable.i = load i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)**, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*** %9, align 8, !tbaa !7
   %vfn.i = getelementptr inbounds i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)** %vtable.i, i64 12
   %10 = load i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)*, i64 (%"class.std::__1::basic_streambuf"*, i8*, i64)** %vfn.i, align 8
   %call.i = call i64 %10(%"class.std::__1::basic_streambuf"* nonnull %__s.coerce, i8* %__op, i64 %sub.ptr.sub29)
@@ -320,7 +362,7 @@ if.then31:                                        ; preds = %if.end26
   br i1 %cmp34, label %if.end38, label %return
 
 if.end38:                                         ; preds = %if.then31, %if.end26
-  store i64 0, i64* %__width_.i, align 8, !tbaa !20
+  store i64 0, i64* %__width_.i, align 8, !tbaa !21
   br label %return
 
 return:                                           ; preds = %if.end38, %invoke.cont, %if.then8, %if.then31, %entry
@@ -357,6 +399,10 @@ declare void @_ZNSt3__18ios_base5clearEj(%"class.std::__1::ios_base"*, i32) #1
 
 declare dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEElsEPKv(%"class.std::__1::basic_ostream"*, i8*) #1
 
+declare dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEE3putEc(%"class.std::__1::basic_ostream"*, i8 signext) #1
+
+declare dereferenceable(160) %"class.std::__1::basic_ostream"* @_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEE5flushEv(%"class.std::__1::basic_ostream"*) #1
+
 attributes #0 = { ssp uwtable "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="core2" "target-features"="+cx16,+fxsr,+mmx,+sse,+sse2,+sse3,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #1 = { "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="core2" "target-features"="+cx16,+fxsr,+mmx,+sse,+sse2,+sse3,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #2 = { noinline noreturn nounwind }
@@ -374,21 +420,21 @@ attributes #6 = { nounwind }
 !3 = !{!"int", !4, i64 0}
 !4 = !{!"omnipotent char", !5, i64 0}
 !5 = !{!"Simple C++ TBAA"}
-!6 = !{!7, !8, i64 0}
-!7 = !{!"_ZTSNSt3__113basic_ostreamIcNS_11char_traitsIcEEE6sentryE", !8, i64 0, !4, i64 8}
-!8 = !{!"bool", !4, i64 0}
-!9 = !{i8 0, i8 2}
-!10 = !{!11, !11, i64 0}
-!11 = !{!"vtable pointer", !5, i64 0}
-!12 = !{!13, !15, i64 40}
-!13 = !{!"_ZTSNSt3__18ios_baseE", !3, i64 8, !14, i64 16, !14, i64 24, !3, i64 32, !3, i64 36, !15, i64 40, !15, i64 48, !15, i64 56, !15, i64 64, !14, i64 72, !14, i64 80, !15, i64 88, !14, i64 96, !14, i64 104, !15, i64 112, !14, i64 120, !14, i64 128}
-!14 = !{!"long", !4, i64 0}
-!15 = !{!"any pointer", !4, i64 0}
-!16 = !{!13, !3, i64 8}
-!17 = !{!18, !3, i64 144}
-!18 = !{!"_ZTSNSt3__19basic_iosIcNS_11char_traitsIcEEEE", !15, i64 136, !3, i64 144}
-!19 = !{!13, !3, i64 32}
-!20 = !{!13, !14, i64 24}
-!21 = !{!4, !4, i64 0}
-!22 = !{!23, !15, i64 16}
-!23 = !{!"_ZTSNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE6__longE", !14, i64 0, !14, i64 8, !15, i64 16}
+!6 = !{!4, !4, i64 0}
+!7 = !{!8, !8, i64 0}
+!8 = !{!"vtable pointer", !5, i64 0}
+!9 = !{!10, !11, i64 0}
+!10 = !{!"_ZTSNSt3__113basic_ostreamIcNS_11char_traitsIcEEE6sentryE", !11, i64 0, !4, i64 8}
+!11 = !{!"bool", !4, i64 0}
+!12 = !{i8 0, i8 2}
+!13 = !{!14, !16, i64 40}
+!14 = !{!"_ZTSNSt3__18ios_baseE", !3, i64 8, !15, i64 16, !15, i64 24, !3, i64 32, !3, i64 36, !16, i64 40, !16, i64 48, !16, i64 56, !16, i64 64, !15, i64 72, !15, i64 80, !16, i64 88, !15, i64 96, !15, i64 104, !16, i64 112, !15, i64 120, !15, i64 128}
+!15 = !{!"long", !4, i64 0}
+!16 = !{!"any pointer", !4, i64 0}
+!17 = !{!14, !3, i64 8}
+!18 = !{!19, !3, i64 144}
+!19 = !{!"_ZTSNSt3__19basic_iosIcNS_11char_traitsIcEEEE", !16, i64 136, !3, i64 144}
+!20 = !{!14, !3, i64 32}
+!21 = !{!14, !15, i64 24}
+!22 = !{!23, !16, i64 16}
+!23 = !{!"_ZTSNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE6__longE", !15, i64 0, !15, i64 8, !16, i64 16}

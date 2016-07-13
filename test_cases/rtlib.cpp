@@ -5,7 +5,7 @@ using namespace std;
 
 int ei=0;
 
-void  Eta()
+void  Eta(char* s)
 {
-	cout << ++ei << " t_id : " << std::this_thread::get_id() << "\n";
+	cout << ++ei << " t_id : l_id -> " << std::this_thread::get_id() << " : " << string(s) << endl;
 }
