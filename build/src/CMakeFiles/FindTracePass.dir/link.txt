@@ -1,0 +1,1 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -bundle -Wl,-headerpad_max_install_names -undefined dynamic_lookup -o libFindTracePass.so CMakeFiles/FindTracePass.dir/samak.cpp.o  -L/Users/Sumedh/Software/LLVM_dev/build/./lib 
