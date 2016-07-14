@@ -39,7 +39,7 @@ namespace
       Instrument(&M);
       
       //Display methods
-      errs() << "\nThreads spawned:\n";
+      errs() << "Threads spawned:\n";
       for(StringRef &s: threadSpawns)
         errs() << s << ", ";
 
@@ -71,6 +71,8 @@ void FindTracePass::Instrument(Module* M)
 {
   LLVMContext &Ctx = M->getContext();
   Constant* prFunc = M->getOrInsertFunction("_Z3EtaPc", Type::getVoidTy(Ctx), Type::getInt8PtrTy(Ctx), NULL);
+  Constant* ThFunc = M->getOrInsertFunction("_Z5Eta_sPc", Type::getVoidTy(Ctx), Type::getInt8PtrTy(Ctx), NULL);
+  Constant* JoFunc = M->getOrInsertFunction("_Z5Eta_jPc", Type::getVoidTy(Ctx), Type::getInt8PtrTy(Ctx), NULL);
 
   //Function to find threads in the code that are being spwned and joined
   for (Module::iterator F = M->begin(), e1 = M->end(); F!=e1; ++F)
@@ -92,11 +94,27 @@ void FindTracePass::Instrument(Module* M)
               //call instructions with thread intialisations
               if(std::regex_match (std::string(cfunc->getName()), std::regex("(_ZNSt3__16threadC1IR)(.*)")))
               {
+                Instruction* spawn_inst = &*I;
+                IRBuilder<> cSpawn_builder(spawn_inst);
+                cSpawn_builder.SetInsertPoint(&*B, I);
+
+                Value *formatStr = cSpawn_builder.CreateGlobalStringPtr(callInst->getOperand(0)->getName());
+                Value* args[] = {formatStr};
+
+                cSpawn_builder.CreateCall(ThFunc,args);
                 threadSpawns.push_back(callInst->getOperand(0)->getName());
               }
               //call instructions with thread.join() method
               else if(cfunc->getName() == "_ZNSt3__16thread4joinEv")
               {
+                Instruction* join_inst = &*I;
+                IRBuilder<> cJoin_builder(join_inst);
+                cJoin_builder.SetInsertPoint(&*B, I);
+
+                Value *formatStr = cJoin_builder.CreateGlobalStringPtr(callInst->getOperand(0)->getName());
+                Value* args[] = {formatStr};
+
+                cJoin_builder.CreateCall(JoFunc,args);
                 threadJoins.push_back(callInst->getOperand(0)->getName());
               }
 
@@ -107,7 +125,7 @@ void FindTracePass::Instrument(Module* M)
               //Making a call to get thread id
               //Then make a cout call to get all printed
               //i.e t_id, lock, index
-              if(std::regex_match (std::string(cfunc->getName()), std::regex("(_ZNSt3__15mutex4lockEv)(.*)")))
+              else if(std::regex_match (std::string(cfunc->getName()), std::regex("(_ZNSt3__15mutex4lockEv)(.*)")))
               {
                 Instruction* lock_inst = &*I;
                 IRBuilder<> cLock_builder(lock_inst);
@@ -151,11 +169,27 @@ void FindTracePass::Instrument(Module* M)
               //Invoke instructions with thread initialisations
               if(std::regex_match (std::string(ifunc->getName()), std::regex("(_ZNSt3__16threadC1IR)(.*)")))
               {
+                Instruction* spawn_inst = &*I;
+                IRBuilder<> iSpawn_builder(spawn_inst);
+                iSpawn_builder.SetInsertPoint(&*B, I);
+
+                Value *formatStr = iSpawn_builder.CreateGlobalStringPtr(invokeInst->getOperand(0)->getName());
+                Value* args[] = {formatStr};
+
+                iSpawn_builder.CreateCall(ThFunc,args);
                 threadSpawns.push_back(invokeInst->getOperand(0)->getName());
               }
               //Invoke instructions with thread.join() method
               else if (ifunc->getName() == "_ZNSt3__16thread4joinEv")
               {
+                Instruction* join_inst = &*I;
+                IRBuilder<> iJoin_builder(join_inst);
+                iJoin_builder.SetInsertPoint(&*B, I);
+
+                Value *formatStr = iJoin_builder.CreateGlobalStringPtr(invokeInst->getOperand(0)->getName());
+                Value* args[] = {formatStr};
+
+                iJoin_builder.CreateCall(JoFunc,args);
                 threadJoins.push_back(invokeInst->getOperand(0)->getName());
               }
 
@@ -166,7 +200,7 @@ void FindTracePass::Instrument(Module* M)
               //Making a call to get thread id
               //Then make a cout call to get all printed
               //i.e t_id, lock, index
-              if(std::regex_match (std::string(ifunc->getName()), std::regex("(_ZNSt3__15mutex4lockEv)(.*)")))
+              else if(std::regex_match (std::string(ifunc->getName()), std::regex("(_ZNSt3__15mutex4lockEv)(.*)")))
               {
                 Instruction* lock_inst = &*I;
                 IRBuilder<> iLock_builder(lock_inst);
