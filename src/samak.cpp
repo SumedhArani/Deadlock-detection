@@ -38,28 +38,28 @@ namespace
     {
       Instrument(&M);
       
-      /*
       //Display methods
       errs() << "\nThreads spawned:\n";
       for(StringRef &s: threadSpawns)
-        errs() << s << ";\n";
+        errs() << s << ", ";
 
       errs() << "\nThreads joined:\n";
       for(StringRef &s: threadJoins)
-         errs() << s << ";\n";
+         errs() << s << ", ";
 
       errs() << "\nLocks:\n";
       for(StringRef &s: mutexLocks)
-        errs() << s << ";\n";
+        errs() << s << ", ";
 
       errs() << "\nUnlocks:\n";
       for(StringRef &s: mutexUnlocks)
-        errs() << s << ";\n";
-      */
-     
+        errs() << s << ", ";
+       
+      errs() << "\n";
       //M.print(dbgs(),0);
      	return true;
    	}
+
     void Instrument(Module* M);
   };
 }
@@ -90,11 +90,15 @@ void FindTracePass::Instrument(Module* M)
             {
               //For threads
               //call instructions with thread intialisations
-              if(std::regex_match (std::string(cfunc->getName()), std::regex("(_ZNSt3__16threadC2IR)(.*)")))
+              if(std::regex_match (std::string(cfunc->getName()), std::regex("(_ZNSt3__16threadC1IR)(.*)")))
+              {
                 threadSpawns.push_back(callInst->getOperand(0)->getName());
+              }
               //call instructions with thread.join() method
               else if(cfunc->getName() == "_ZNSt3__16thread4joinEv")
+              {
                 threadJoins.push_back(callInst->getOperand(0)->getName());
+              }
 
               //For locks with CALL instruction
               //call instructions with thread intialisations
@@ -111,9 +115,13 @@ void FindTracePass::Instrument(Module* M)
 
                 Value *formatStr = cLock_builder.CreateGlobalStringPtr(callInst->getOperand(0)->getName());
                 Value* args[] = {formatStr};
-                cLock_builder.CreateCall(prFunc,args);
 
-                mutexLocks.push_back(callInst->getOperand(0)->getName());
+                if(callInst->getOperand(0)->getName()!="c1")
+                {
+                  cLock_builder.CreateCall(prFunc,args);
+                  mutexLocks.push_back(callInst->getOperand(0)->getName());                  
+                }
+
               }
               //call instructions with thread.join() method
               else if(cfunc->getName() == "_ZNSt3__15mutex6unlockEv")
@@ -124,9 +132,12 @@ void FindTracePass::Instrument(Module* M)
 
                 Value *formatStr = cUnlock_builder.CreateGlobalStringPtr(callInst->getOperand(0)->getName());
                 Value* args[] = {formatStr};
-                cUnlock_builder.CreateCall(prFunc, args);
 
-                mutexUnlocks.push_back(callInst->getOperand(0)->getName());
+                if(callInst->getOperand(0)->getName()!="c1")
+                {
+                  cUnlock_builder.CreateCall(prFunc, args);
+                  mutexUnlocks.push_back(callInst->getOperand(0)->getName());
+                }
               }
             }
           }
@@ -138,11 +149,15 @@ void FindTracePass::Instrument(Module* M)
             {
               //For threads
               //Invoke instructions with thread initialisations
-              if(std::regex_match (std::string(ifunc->getName()), std::regex("(_ZNSt3__16threadC2IR)(.*)")))
+              if(std::regex_match (std::string(ifunc->getName()), std::regex("(_ZNSt3__16threadC1IR)(.*)")))
+              {
                 threadSpawns.push_back(invokeInst->getOperand(0)->getName());
+              }
               //Invoke instructions with thread.join() method
               else if (ifunc->getName() == "_ZNSt3__16thread4joinEv")
+              {
                 threadJoins.push_back(invokeInst->getOperand(0)->getName());
+              }
 
               //For locks with INVOKE inst
               //call instructions with thread intialisations
@@ -159,9 +174,12 @@ void FindTracePass::Instrument(Module* M)
                 
                 Value *formatStr = iLock_builder.CreateGlobalStringPtr(invokeInst->getOperand(0)->getName());
                 Value* args[] = {formatStr};
-                iLock_builder.CreateCall(prFunc, args);
 
-                mutexLocks.push_back(invokeInst->getOperand(0)->getName());
+                if(invokeInst->getOperand(0)->getName()!="c1")
+                {
+                  iLock_builder.CreateCall(prFunc, args);
+                  mutexLocks.push_back(invokeInst->getOperand(0)->getName());
+                }
               }
               //Invoke instructions with mutex unlocks
               else if (ifunc->getName() == "_ZNSt3__15mutex6unlockEv")
@@ -172,9 +190,12 @@ void FindTracePass::Instrument(Module* M)
 
                 Value *formatStr = iUnlock_builder.CreateGlobalStringPtr(invokeInst->getOperand(0)->getName());
                 Value* args[] = {formatStr};
-                iUnlock_builder.CreateCall(prFunc, args);
 
-                mutexUnlocks.push_back(invokeInst->getOperand(0)->getName());
+                if(invokeInst->getOperand(0)->getName()!="c1")
+                {
+                  iUnlock_builder.CreateCall(prFunc, args);
+                  mutexUnlocks.push_back(invokeInst->getOperand(0)->getName());
+                }
               }
             }
           }
