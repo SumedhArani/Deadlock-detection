@@ -71,8 +71,9 @@ void FindTracePass::Instrument(Module* M)
 {
   LLVMContext &Ctx = M->getContext();
   Constant* prFunc = M->getOrInsertFunction("_Z3EtaPc", Type::getVoidTy(Ctx), Type::getInt8PtrTy(Ctx), NULL);
-  Constant* ThFunc = M->getOrInsertFunction("_Z5Eta_sPc", Type::getVoidTy(Ctx), Type::getInt8PtrTy(Ctx), NULL);
-  Constant* JoFunc = M->getOrInsertFunction("_Z5Eta_jPc", Type::getVoidTy(Ctx), Type::getInt8PtrTy(Ctx), NULL);
+  Constant* SpawnFunc = M->getOrInsertFunction("_Z5Eta_sPc", Type::getVoidTy(Ctx), Type::getInt8PtrTy(Ctx), NULL);
+  Constant* JoinFunc = M->getOrInsertFunction("_Z5Eta_jPc", Type::getVoidTy(Ctx), Type::getInt8PtrTy(Ctx), NULL);
+  Constant* LockFunc = M->getOrInsertFunction("_Z8Eta_lockv", Type::getVoidTy(Ctx), NULL);
 
   //Function to find threads in the code that are being spwned and joined
   for (Module::iterator F = M->begin(), e1 = M->end(); F!=e1; ++F)
@@ -100,8 +101,16 @@ void FindTracePass::Instrument(Module* M)
 
                 Value *formatStr = cSpawn_builder.CreateGlobalStringPtr(callInst->getOperand(0)->getName());
                 Value* args[] = {formatStr};
-
-                cSpawn_builder.CreateCall(ThFunc,args);
+                cSpawn_builder.CreateCall(LockFunc);
+                TerminatorInst* t_inst = B->getTerminator();
+                for (unsigned num = 0; num < t_inst->getNumSuccessors(); ++num)
+                {
+                  BasicBlock* bb_succ = t_inst->getSuccessor(num);
+                  Instruction* b_inst = &*(bb_succ->getFirstInsertionPt());
+                  IRBuilder<> follow_builder(b_inst);
+                  follow_builder.SetInsertPoint(bb_succ, bb_succ->getFirstInsertionPt());
+                  follow_builder.CreateCall(SpawnFunc,args);                
+                } 
                 threadSpawns.push_back(callInst->getOperand(0)->getName());
               }
               //call instructions with thread.join() method
@@ -113,8 +122,16 @@ void FindTracePass::Instrument(Module* M)
 
                 Value *formatStr = cJoin_builder.CreateGlobalStringPtr(callInst->getOperand(0)->getName());
                 Value* args[] = {formatStr};
-
-                cJoin_builder.CreateCall(JoFunc,args);
+                cJoin_builder.CreateCall(LockFunc);
+                TerminatorInst* t_inst = B->getTerminator();
+                for (unsigned num = 0; num < t_inst->getNumSuccessors(); ++num)
+                {
+                  BasicBlock* bb_succ = t_inst->getSuccessor(num);
+                  Instruction* b_inst = &*(bb_succ->getFirstInsertionPt());
+                  IRBuilder<> follow_builder(b_inst);
+                  follow_builder.SetInsertPoint(bb_succ, bb_succ->getFirstInsertionPt());
+                  follow_builder.CreateCall(JoinFunc,args);                
+                }
                 threadJoins.push_back(callInst->getOperand(0)->getName());
               }
 
@@ -175,8 +192,16 @@ void FindTracePass::Instrument(Module* M)
 
                 Value *formatStr = iSpawn_builder.CreateGlobalStringPtr(invokeInst->getOperand(0)->getName());
                 Value* args[] = {formatStr};
-
-                iSpawn_builder.CreateCall(ThFunc,args);
+                iSpawn_builder.CreateCall(LockFunc);
+                TerminatorInst* t_inst = B->getTerminator();
+                for (unsigned num = 0; num < t_inst->getNumSuccessors(); ++num)
+                {
+                  BasicBlock* bb_succ = t_inst->getSuccessor(num);
+                  Instruction* b_inst = &*(bb_succ->getFirstInsertionPt());
+                  IRBuilder<> follow_builder(b_inst);
+                  follow_builder.SetInsertPoint(bb_succ, bb_succ->getFirstInsertionPt());
+                  follow_builder.CreateCall(SpawnFunc,args);                
+                }                
                 threadSpawns.push_back(invokeInst->getOperand(0)->getName());
               }
               //Invoke instructions with thread.join() method
@@ -188,8 +213,16 @@ void FindTracePass::Instrument(Module* M)
 
                 Value *formatStr = iJoin_builder.CreateGlobalStringPtr(invokeInst->getOperand(0)->getName());
                 Value* args[] = {formatStr};
-
-                iJoin_builder.CreateCall(JoFunc,args);
+                iJoin_builder.CreateCall(LockFunc);
+                TerminatorInst* t_inst = B->getTerminator();
+                for (unsigned num = 0; num < t_inst->getNumSuccessors(); ++num)
+                {
+                  BasicBlock* bb_succ = t_inst->getSuccessor(num);
+                  Instruction* b_inst = &*(bb_succ->getFirstInsertionPt());
+                  IRBuilder<> follow_builder(b_inst);
+                  follow_builder.SetInsertPoint(bb_succ, bb_succ->getFirstInsertionPt());
+                  follow_builder.CreateCall(JoinFunc,args);                
+                }
                 threadJoins.push_back(invokeInst->getOperand(0)->getName());
               }
 

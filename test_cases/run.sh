@@ -14,5 +14,4 @@ rm *.bc*
 rm *.s
 rm *.sh~
 rm *.ll~
-rm *.ll
 rm *.out

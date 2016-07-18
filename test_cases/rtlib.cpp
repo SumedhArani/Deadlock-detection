@@ -5,6 +5,7 @@ using namespace std;
 
 int ei=0;
 mutex c1;
+mutex c2;
 
 void Eta(char* s)
 {
@@ -15,14 +16,17 @@ void Eta(char* s)
 
 void Eta_s(char* s)
 {
-	c1.lock();
-	cout << ++ei << ", Spawn, "<< string(s) << endl;
-	c1.unlock();
+	cout << ++ei << ", " << std::this_thread::get_id() << ", Spawn, "<< string(s) << endl;
+	c2.unlock();
 }
 
 void Eta_j(char* s)
 {
-	c1.lock();
-	cout << ++ei << ", Join, "<< string(s) << endl;
-	c1.unlock();
+	cout << ++ei << ", " << std::this_thread::get_id() << ", Join, "<< string(s) << endl;
+	c2.unlock();
+}
+
+void Eta_lock()
+{
+	c2.lock();
 }
